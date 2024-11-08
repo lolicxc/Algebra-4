@@ -32,6 +32,8 @@ public class StartVectorGen : MonoBehaviour
     private float FOD;
 
     private List<Rect> vectors;
+    private List<Vector3> vectorEnds;
+
     int currentVector;
 
     [ContextMenu("Gen")]
@@ -76,7 +78,34 @@ public class StartVectorGen : MonoBehaviour
         nearDone = true;
     }
 
-    
+    public void GenNearPlaneRect2()
+    {
+        // Usa la misma lógica para obtener las coordenadas
+        Vector3 center = camera.transform.position;
+
+        // Inicializa las posiciones de las esquinas de Rect2 utilizando el mismo cálculo que para las líneas verdes
+        Vector3 horizontalScale = MultiplyVectorNum(-camera.transform.right, cameraWidth / 2);
+        Vector3 verticalScale = MultiplyVectorNum(-camera.transform.up, cameraHeight / 2);
+
+        // Calcula las esquinas de Rect2
+        bottomLeft = AddVectors(center, horizontalScale);
+        bottomLeft = AddVectors(bottomLeft, verticalScale);
+
+        bottomRight = new Vector3(bottomLeft.x + aspectRatio.x, bottomLeft.y, bottomLeft.z);
+        topRight = new Vector3(bottomRight.x, bottomRight.y + aspectRatio.y, bottomRight.z);
+        topLeft = new Vector3(bottomLeft.x - aspectRatio.x, bottomLeft.y + aspectRatio.y, bottomLeft.z);
+
+        // Desplaza las esquinas de Rect2 hacia adelante en el eje Z
+        float rect2OffsetZ = FOD;
+        bottomLeft.z += rect2OffsetZ;
+        bottomRight.z += rect2OffsetZ;
+        topLeft.z += rect2OffsetZ;
+        topRight.z += rect2OffsetZ;
+
+        nearDone = true;
+    }
+
+
 
     public void SetUpStartPoint()
     {
@@ -108,7 +137,7 @@ public class StartVectorGen : MonoBehaviour
         float verHypotenuse = cameraHeight/2 / Mathf.Sin(FOV / 2);
         float horHypotenuse = cameraWidth/2 / Mathf.Sin(FOV / 2);
 
-        float vectorLength = /*Mathf.Sin(FOV/2) * */horHypotenuse;
+        float vectorLength = horHypotenuse;
 
         // Vector superior derecho
         Vector3 topRightVector = new Vector3(
@@ -143,6 +172,17 @@ public class StartVectorGen : MonoBehaviour
         vectors.Add(new Rect(startPoint, topLeftVector, FOD));
         vectors.Add(new Rect(startPoint, bottomRightVector, FOD));
         vectors.Add(new Rect(startPoint, bottomLeftVector, FOD));
+
+        vectorEnds = new List<Vector3>();
+
+        foreach (Rect vector in vectors)
+        {
+            Vector3 endPoint = vector.startPos + MultiplyVectorNum(vector.rotationAngles, vector.magnitude);
+            vectorEnds.Add(endPoint);
+        }
+
+
+
     }
 
     // Update is called once per frame
@@ -163,13 +203,14 @@ public class StartVectorGen : MonoBehaviour
         GenNearPlane();
         SetUpStartPoint();
         SetUpVectorPair();
+       
     }
 
     private void OnDrawGizmos()
     {
         if (nearDone)
         {
-
+            // Dibujar Rect1
             Gizmos.color = Color.red;
             Gizmos.DrawLine(topLeft, bottomLeft);
             Gizmos.color = Color.white;
@@ -182,11 +223,21 @@ public class StartVectorGen : MonoBehaviour
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(startPoint, 0.2f);
 
+            // Dibujar vectores de Rect1
             foreach (Rect vector in vectors)
             {
                 Gizmos.DrawRay(vector.startPos, MultiplyVectorNum(vector.rotationAngles, FOD));
             }
 
+            if (vectorEnds.Count == 4)
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawLine(vectorEnds[0], vectorEnds[1]);
+                Gizmos.DrawLine(vectorEnds[1], vectorEnds[3]);
+                Gizmos.DrawLine(vectorEnds[3], vectorEnds[2]);
+                Gizmos.DrawLine(vectorEnds[2], vectorEnds[0]);
+            }
         }
     }
+
 }
