@@ -9,7 +9,8 @@ public class StartVectorGen : MonoBehaviour
 
     [SerializeField] private Vector2 aspectRatio;
 
-    [SerializeField] private float FOV;
+    [SerializeField] private float hFOV;
+    [SerializeField] private float vFOV;
 
     private GameObject camera;
 
@@ -27,6 +28,7 @@ public class StartVectorGen : MonoBehaviour
     private float cameraWidth;
 
     private Vector3 startPoint;
+    Vector3 center;
 
     private float vectorAngle;
     private float FOD;
@@ -60,13 +62,13 @@ public class StartVectorGen : MonoBehaviour
 
     public void GenNearPlane()
     {
-        Vector3 center = camera.transform.position;
+        center = camera.transform.position;
 
         bottomLeft = center;
 
         Vector3 horizontalScale = MultiplyVectorNum(-camera.transform.right, cameraWidth / 2);
-        Vector3 verticalScale = MultiplyVectorNum(-camera.transform.up, cameraHeight/2);
-        
+        Vector3 verticalScale = MultiplyVectorNum(-camera.transform.up, cameraHeight / 2);
+
         Vector3 scale = AddVectors(horizontalScale, verticalScale);
 
         bottomLeft = AddVectors(bottomLeft, scale); ;
@@ -78,101 +80,78 @@ public class StartVectorGen : MonoBehaviour
         nearDone = true;
     }
 
-    public void GenNearPlaneRect2()
-    {
-        // Usa la misma lógica para obtener las coordenadas
-        Vector3 center = camera.transform.position;
-
-        // Inicializa las posiciones de las esquinas de Rect2 utilizando el mismo cálculo que para las líneas verdes
-        Vector3 horizontalScale = MultiplyVectorNum(-camera.transform.right, cameraWidth / 2);
-        Vector3 verticalScale = MultiplyVectorNum(-camera.transform.up, cameraHeight / 2);
-
-        // Calcula las esquinas de Rect2
-        bottomLeft = AddVectors(center, horizontalScale);
-        bottomLeft = AddVectors(bottomLeft, verticalScale);
-
-        bottomRight = new Vector3(bottomLeft.x + aspectRatio.x, bottomLeft.y, bottomLeft.z);
-        topRight = new Vector3(bottomRight.x, bottomRight.y + aspectRatio.y, bottomRight.z);
-        topLeft = new Vector3(bottomLeft.x - aspectRatio.x, bottomLeft.y + aspectRatio.y, bottomLeft.z);
-
-        // Desplaza las esquinas de Rect2 hacia adelante en el eje Z
-        float rect2OffsetZ = FOD;
-        bottomLeft.z += rect2OffsetZ;
-        bottomRight.z += rect2OffsetZ;
-        topLeft.z += rect2OffsetZ;
-        topRight.z += rect2OffsetZ;
-
-        nearDone = true;
-    }
-
 
 
     public void SetUpStartPoint()
     {
         //adyacente con sohcahtoa
-        nearDist = (cameraHeight / 2) / Mathf.Tan(FOV / 2);
+        float radFOV = (Mathf.PI / 180.0f) * hFOV;
 
-        Debug.Log(nearDist);
+        Debug.Log(Mathf.Tan(radFOV / 2));
+        nearDist = (cameraWidth / 2) / Mathf.Tan(radFOV / 2);
 
-        startPoint = bottomLeft;
+        startPoint = center;
 
         Vector3 scaledStart = new Vector3();
 
-        scaledStart = MultiplyVectorNum(camera.transform.up, cameraHeight / 2);
-        startPoint = AddVectors(startPoint, scaledStart);
-
-        scaledStart = MultiplyVectorNum(camera.transform.right, cameraWidth / 2);
-        startPoint = AddVectors(startPoint, scaledStart);
-
-        scaledStart = MultiplyVectorNum(camera.transform.forward, nearDist*2 + 7);
+        scaledStart = MultiplyVectorNum(camera.transform.forward, -nearDist/**2 + 7*/);
+        Debug.Log(nearDist);
+        Debug.Log(scaledStart.magnitude);
         startPoint = AddVectors(startPoint, scaledStart);
 
         camera.transform.position = startPoint;
+
     }
 
-    public void SetUpVectorPair()
+    public void SetVectors()
     {
-        //Hyp = opuesto / seno(theta)
 
-        float verHypotenuse = cameraHeight/2 / Mathf.Sin(FOV / 2);
-        float horHypotenuse = cameraWidth/2 / Mathf.Sin(FOV / 2);
+        //float hRadFOV = (Mathf.PI / 180.0f) * hFOV;
+        //float vRadFOV = (Mathf.PI / 180.0f) * vFOV;
 
-        float vectorLength = horHypotenuse;
+        ////Hyp = opuesto / seno(theta)
+
+        //float verHypotenuse = cameraHeight / 2 / Mathf.Sin(vRadFOV / 2);
+        //float horHypotenuse = cameraWidth / 2 / Mathf.Sin(hRadFOV / 2);
+
+        //float verOpposite = verHypotenuse / Mathf.Tan(vRadFOV / 2);
+        //float horOpposite = horHypotenuse / Mathf.Tan(hRadFOV / 2);
 
         // Vector superior derecho
         Vector3 topRightVector = new Vector3(
-            horHypotenuse,  // x
-            verHypotenuse,  // y
-            vectorLength  // z
-        );
-
-        // Vector inferior izquierdo
-        Vector3 bottomLeftVector = new Vector3(
-            -horHypotenuse, // x
-            -verHypotenuse,   // -y
-            vectorLength     // z
-        );
-
-        // Vector superior izquierdo
-        Vector3 topLeftVector = new Vector3(
-            -horHypotenuse,  // -x
-            verHypotenuse,   // y
-            vectorLength    // z
+            cameraWidth / 2,  // x
+            cameraHeight / 2,  // y
+            nearDist    // z
         );
 
         // Vector inferior derecho
         Vector3 bottomRightVector = new Vector3(
-            horHypotenuse,    // -x
-            -verHypotenuse,  // -y
-            vectorLength    // z
+            cameraWidth / 2,    // -x
+            -cameraHeight / 2,   // -y
+            nearDist      // z
         );
 
-        // Añadir los vectores a la lista
+        // Vector inferior izquierdo
+        Vector3 bottomLeftVector = new Vector3(
+            -cameraWidth / 2,   // x
+            -cameraHeight / 2,   // -y
+            nearDist      // z
+        );
+
+        // Vector superior izquierdo
+        Vector3 topLeftVector = new Vector3(
+            -cameraWidth / 2,  // -x
+            cameraHeight / 2,   // y
+            nearDist     // z
+        );
+
+        // A adir los vectores a la lista
         vectors.Add(new Rect(startPoint, topRightVector, FOD));
         vectors.Add(new Rect(startPoint, topLeftVector, FOD));
         vectors.Add(new Rect(startPoint, bottomRightVector, FOD));
         vectors.Add(new Rect(startPoint, bottomLeftVector, FOD));
 
+        // Calcular y guardar los puntos finales de los vectores
         vectorEnds = new List<Vector3>();
 
         foreach (Rect vector in vectors)
@@ -180,8 +159,6 @@ public class StartVectorGen : MonoBehaviour
             Vector3 endPoint = vector.startPos + MultiplyVectorNum(vector.rotationAngles, vector.magnitude);
             vectorEnds.Add(endPoint);
         }
-
-
 
     }
 
@@ -193,7 +170,8 @@ public class StartVectorGen : MonoBehaviour
         vectors = new List<Rect>();
 
         //hardcoded. See actual values
-        FOV = 160;
+        hFOV = 160;
+        vFOV = 90;
         cameraHeight = aspectRatio.y;
         cameraWidth = aspectRatio.x;
 
@@ -202,15 +180,14 @@ public class StartVectorGen : MonoBehaviour
 
         GenNearPlane();
         SetUpStartPoint();
-        SetUpVectorPair();
-       
+        SetVectors();
     }
 
     private void OnDrawGizmos()
     {
         if (nearDone)
         {
-            // Dibujar Rect1
+
             Gizmos.color = Color.red;
             Gizmos.DrawLine(topLeft, bottomLeft);
             Gizmos.color = Color.white;
@@ -223,11 +200,11 @@ public class StartVectorGen : MonoBehaviour
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(startPoint, 0.2f);
 
-            // Dibujar vectores de Rect1
             foreach (Rect vector in vectors)
             {
-                Gizmos.DrawRay(vector.startPos, MultiplyVectorNum(vector.rotationAngles, FOD));
+                Gizmos.DrawRay(vector.startPos, MultiplyVectorNum(vector.rotationAngles, vector.magnitude));
             }
+
 
             if (vectorEnds.Count == 4)
             {
@@ -239,5 +216,4 @@ public class StartVectorGen : MonoBehaviour
             }
         }
     }
-
 }
