@@ -14,7 +14,7 @@ public class Frustrum
     public MyPlane nearFace;
 
 
-    public Frustrum(float aspect, float fovY, float zNear, float zFar)
+    public Frustrum(Transform transform, float aspect, float fovY, float zNear, float zFar)
     {
         // Transform cam = Camera.main.transform;
         //
@@ -35,22 +35,22 @@ public class Frustrum
         //
         // bottomFace = new MyPlane(cam.position, Vector3.Cross(frontMultFar + cam.up * halfVSide, cam.right));
 
-        SetData(aspect, fovY, zNear, zFar);
+        SetData(transform, aspect, fovY, zNear, zFar);
     }
 
-    public void SetData(float aspect, float fovY, float zNear, float zFar)
+    public void SetData(Transform testTransform, float aspect, float fovY, float zNear, float zFar)
     {
-        Transform cam = Camera.main.transform;
+        Transform cam = testTransform;
 
         fovY *= Mathf.Deg2Rad;
 
         float halfVSide = zFar * Mathf.Tan(fovY * 0.5f);
         float halfHSide = halfVSide * aspect;
         
-        Vector3 frontMultFar = zFar * Camera.main.transform.forward;
+        Vector3 frontMultFar = zFar * testTransform.forward;
 
-        nearFace.SetNormalAndPosition(cam.position + zNear * cam.forward, cam.forward);
-        farFace.SetNormalAndPosition(cam.position + frontMultFar, -cam.forward);
+        nearFace.SetNormalAndPosition(cam.position + zNear * cam.forward, -cam.forward);
+        farFace.SetNormalAndPosition(cam.position + frontMultFar, cam.forward);
         rightFace.SetNormalAndPosition(cam.position, Vector3.Cross(cam.up, frontMultFar + cam.right * halfHSide));
 
         leftFace.SetNormalAndPosition(cam.position, Vector3.Cross(frontMultFar - cam.right * halfHSide, cam.up));

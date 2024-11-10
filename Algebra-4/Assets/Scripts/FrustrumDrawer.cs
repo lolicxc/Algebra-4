@@ -54,10 +54,10 @@ public class FrustumDrawer : MonoBehaviour
             Gizmos.DrawLine(corners[i], corners[i + 4]);
         }
 
-        foreach (MyPlane plane in frustrum.GetPlanes())
-        {
-            Gizmos.DrawLine(transform.position, plane.Normal);
-            Gizmos.DrawWireSphere(transform.position * plane.Distance, 0.01f);
-        }
+        //foreach (MyPlane plane in frustrum.GetPlanes())
+        //{
+        //    Gizmos.DrawLine(transform.position, plane.Normal);
+        //    Gizmos.DrawWireSphere(transform.position * plane.Distance, 0.01f);
+        //}
     }
 }

@@ -11,7 +11,7 @@ public class FrustrumCulling : MonoBehaviour
 
     private void Start()
     {
-        Frustrum = new Frustrum(aspectRatio.x / aspectRatio.y, fovY, zNear, zFar);
+        Frustrum = new Frustrum(transform, aspectRatio.x / aspectRatio.y, fovY, zNear, zFar);
     }
 
     private void Update()
@@ -20,34 +20,35 @@ public class FrustrumCulling : MonoBehaviour
 
         foreach (AABB go in gos)
         {
-            bool found = true;
-            foreach (var plane in Frustrum.GetPlanes())
-            {
-                Vector3[] vars = go.BoxVertices;
+            go.GetComponent<MeshRenderer>().enabled = IsPointOnPlane(go);
+        }
+    }
 
-                for (int i = 0; i < vars.Length; i++)
+    private bool IsPointOnPlane(AABB go)
+    {
+        Vector3[] vertices = go.BoxVertices;
+
+        
+
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            int count = 0;
+
+            foreach (var item in Frustrum.GetPlanes())
+            {
+                if (GetSide(item, vertices[i]))
                 {
-                    if (!GetSide(plane, vars[i]))
-                    {
-                        found = false;
-                        break;
-                    }
+                    count++;
                 }
-                
-                // for (int i = 0; i < go.BoxVertices.Length; i++)
-                // {
-                //     if (!GetSide(plane, go.transform.position))
-                //     {
-                //         found = false;
-                //         break;
-                //     }
-                // }
-                
             }
 
-            go.GetComponent<MeshRenderer>().enabled = found;
+            if (count == 6)
+            {
+                return true;
+            }
         }
-        
+
+        return false;
     }
 
     public bool GetSide(MyPlane plane, Vector3 position)
@@ -58,6 +59,6 @@ public class FrustrumCulling : MonoBehaviour
 
     private void UpdateFrustrum()
     {
-        Frustrum.SetData(aspectRatio.x / aspectRatio.y, fovY, zNear, zFar);
+        Frustrum.SetData(transform, aspectRatio.x / aspectRatio.y, fovY, zNear, zFar);
     }
 }
