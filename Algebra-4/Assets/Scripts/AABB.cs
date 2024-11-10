@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//TE ODIO
 [ExecuteAlways]
 public class AABB : MonoBehaviour
 {
@@ -37,31 +36,6 @@ public class AABB : MonoBehaviour
     {
         SearchVertex();
         SetVertices();
-
-        Debug.Log("Is on frustrum: " + IsOnFrustrum());
-    }
-
-    private bool IsOnFrustrum()
-    {
-        return IsOnOrForwardPlane(frustrumCulling.Frustrum.leftFace) &&
-               IsOnOrForwardPlane(frustrumCulling.Frustrum.rightFace) &&
-               IsOnOrForwardPlane(frustrumCulling.Frustrum.topFace) &&
-               IsOnOrForwardPlane(frustrumCulling.Frustrum.bottomFace) &&
-               IsOnOrForwardPlane(frustrumCulling.Frustrum.nearFace) &&
-               IsOnOrForwardPlane(frustrumCulling.Frustrum.farFace);
-    }
-
-    public bool IsOnOrForwardPlane(MyPlane plane)
-    {
-        float r = GetSize().x * Mathf.Abs(plane.Normal.x) +
-                  GetSize().y * Mathf.Abs(plane.Normal.y) + GetSize().z * Mathf.Abs(plane.Normal.z);
-
-        return -r <= plane.GetSignedDistanceToPlane(GetCenter());
-    }
-
-    public bool GetSide(MyPlane plane)
-    {
-        return plane.GetSide(GetCenter());
     }
 
     private void SearchVertex()
@@ -90,31 +64,6 @@ public class AABB : MonoBehaviour
         boxVertices[5] = centerV + new Vector3(halfSize.x, halfSize.y, -halfSize.z);
         boxVertices[6] = centerV + new Vector3(halfSize.x, -halfSize.y, halfSize.z);
         boxVertices[7] = centerV + new Vector3(-halfSize.x, halfSize.y, -halfSize.z);
-    }
-
-    public bool IsColliding(AABB Aabb)
-    {
-        float halfWidthR1 = Aabb.GetSize().x;
-        float halfHeightR1 = Aabb.GetSize().y;
-        float halfProfR1 = Aabb.GetSize().z;
-
-        float halfWidthR2 = GetSize().x;
-        float halfHeightR2 = GetSize().y;
-        float halfProfR2 = GetSize().z;
-
-        float distanceX = Aabb.GetCenter().x - GetCenter().x;
-        float distanceY = Aabb.GetCenter().y - GetCenter().y;
-        float distanceZ = Aabb.GetCenter().z - GetCenter().z;
-
-        distanceX = Mathf.Abs(distanceX);
-        distanceY = Mathf.Abs(distanceY);
-        distanceZ = Mathf.Abs(distanceZ);
-
-        distanceX -= halfWidthR1 + halfWidthR2;
-        distanceY -= halfHeightR1 + halfHeightR2;
-        distanceZ -= halfProfR1 + halfProfR2;
-
-        return (distanceX < 0 && distanceY < 0 && distanceZ < 0);
     }
 
     public Vector3 GetCenter()

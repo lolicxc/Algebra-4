@@ -41,14 +41,6 @@ public class Model : MonoBehaviour
         extents = new Vector3(iI, iJ, iK);
     }
 
-    public bool IsOnOrForwardPlane(MyPlane plane)
-    {
-        float r = extents.x * Mathf.Abs(plane.Normal.x) +
-                    extents.y * Mathf.Abs(plane.Normal.y) + extents.z * Mathf.Abs(plane.Normal.z);
-
-        return -r <= plane.GetSignedDistanceToPlane(center);
-    }
-
     public bool IsOnFrustrum()
     {
         Vector3 globalCenter = transform.position;

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//TE ODIO
 [ExecuteAlways]
 public class FrustrumCulling : MonoBehaviour
 {
@@ -25,15 +24,24 @@ public class FrustrumCulling : MonoBehaviour
             foreach (var plane in Frustrum.GetPlanes())
             {
                 Vector3[] vars = go.BoxVertices;
-                
-                for (int i = 0; i < go.BoxVertices.Length; i++)
+
+                for (int i = 0; i < vars.Length; i++)
                 {
-                    if (!GetSide(plane, go.transform.position))
+                    if (!GetSide(plane, vars[i]))
                     {
                         found = false;
                         break;
                     }
                 }
+                
+                // for (int i = 0; i < go.BoxVertices.Length; i++)
+                // {
+                //     if (!GetSide(plane, go.transform.position))
+                //     {
+                //         found = false;
+                //         break;
+                //     }
+                // }
                 
             }
 

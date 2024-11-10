@@ -7,7 +7,6 @@ public class Frustrum
     public MyPlane topFace;
     public MyPlane bottomFace;
 
-
     public MyPlane rightFace;
     public MyPlane leftFace;
 
@@ -17,24 +16,26 @@ public class Frustrum
 
     public Frustrum(float aspect, float fovY, float zNear, float zFar)
     {
-        Transform cam = Camera.main.transform;
+        // Transform cam = Camera.main.transform;
+        //
+        // fovY *= Mathf.Deg2Rad;
+        //
+        // float halfVSide = zFar * Mathf.Tan(fovY * 0.5f);
+        // float halfHSide = halfVSide * aspect;
+        //
+        // Vector3 frontMultFar = zFar * Camera.main.transform.forward;
+        //
+        // nearFace = new MyPlane(cam.position + zNear * cam.forward, cam.forward);
+        // farFace = new MyPlane(cam.position + frontMultFar, -cam.forward);
+        // rightFace = new MyPlane(cam.position, Vector3.Cross(frontMultFar - cam.right * halfHSide, cam.up));
+        //
+        // leftFace = new MyPlane(cam.position, Vector3.Cross(cam.up, frontMultFar + cam.right * halfHSide));
+        //
+        // topFace = new MyPlane(cam.position, Vector3.Cross(cam.right, frontMultFar - cam.up * halfVSide));
+        //
+        // bottomFace = new MyPlane(cam.position, Vector3.Cross(frontMultFar + cam.up * halfVSide, cam.right));
 
-        fovY *= Mathf.Deg2Rad;
-
-        float halfVSide = zFar * Mathf.Tan(fovY * 0.5f);
-        float halfHSide = halfVSide * aspect;
-        
-        Vector3 frontMultFar = zFar * Camera.main.transform.forward;
-
-        nearFace = new MyPlane(cam.position + zNear * cam.forward, cam.forward);
-        farFace = new MyPlane(cam.position + frontMultFar, -cam.forward);
-        rightFace = new MyPlane(cam.position, Vector3.Cross(frontMultFar - cam.right * halfHSide, cam.up));
-
-        leftFace = new MyPlane(cam.position, Vector3.Cross(cam.up, frontMultFar + cam.right * halfHSide));
-
-        topFace = new MyPlane(cam.position, Vector3.Cross(cam.right, frontMultFar - cam.up * halfVSide));
-
-        bottomFace = new MyPlane(cam.position, Vector3.Cross(frontMultFar + cam.up * halfVSide, cam.right));
+        SetData(aspect, fovY, zNear, zFar);
     }
 
     public void SetData(float aspect, float fovY, float zNear, float zFar)
