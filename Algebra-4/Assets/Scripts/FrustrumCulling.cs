@@ -6,7 +6,7 @@ using UnityEngine;
 public class FrustrumCulling : MonoBehaviour
 {
     [SerializeField] private Vector2 aspectRatio;
-    [SerializeField] private List<GameObject> gos;
+    [SerializeField] private List<AABB> gos;
     [SerializeField] private float fovY, zNear, zFar;
     public Frustrum Frustrum;
 
@@ -19,18 +19,25 @@ public class FrustrumCulling : MonoBehaviour
     {
         UpdateFrustrum();
 
-        foreach (GameObject go in gos)
+        foreach (AABB go in gos)
         {
             bool found = true;
             foreach (var plane in Frustrum.GetPlanes())
             {
-                if (!GetSide(plane, go.transform.position))
+                Vector3[] vars = go.BoxVertices;
+                
+                for (int i = 0; i < go.BoxVertices.Length; i++)
                 {
-                    found = false;
-                    
+                    if (!GetSide(plane, go.transform.position))
+                    {
+                        found = false;
+                        break;
+                    }
                 }
+                
             }
-            go.SetActive(found);
+
+            go.GetComponent<MeshRenderer>().enabled = found;
         }
         
     }
