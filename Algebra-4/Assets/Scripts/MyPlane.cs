@@ -24,7 +24,7 @@ public class MyPlane
     public void SetNormalAndPosition(Vector3 point, Vector3 normal)
     {
         this.normal = normal.normalized;
-        distance = -Vector3.Dot(this.normal, point);
+        distance = Vector3.Dot(this.normal, point);
     }
 
     public float GetSignedDistanceToPlane(Vector3 point)

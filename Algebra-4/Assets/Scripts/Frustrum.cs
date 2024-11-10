@@ -50,9 +50,9 @@ public class Frustrum
 
         nearFace.SetNormalAndPosition(cam.position + zNear * cam.forward, cam.forward);
         farFace.SetNormalAndPosition(cam.position + frontMultFar, -cam.forward);
-        rightFace.SetNormalAndPosition(cam.position, Vector3.Cross(frontMultFar - cam.right * halfHSide, cam.up));
+        rightFace.SetNormalAndPosition(cam.position, Vector3.Cross(cam.up, frontMultFar + cam.right * halfHSide));
 
-        leftFace.SetNormalAndPosition(cam.position, Vector3.Cross(cam.up, frontMultFar + cam.right * halfHSide));
+        leftFace.SetNormalAndPosition(cam.position, Vector3.Cross(frontMultFar - cam.right * halfHSide, cam.up));
 
         topFace.SetNormalAndPosition(cam.position, Vector3.Cross(cam.right, frontMultFar - cam.up * halfVSide));
 
