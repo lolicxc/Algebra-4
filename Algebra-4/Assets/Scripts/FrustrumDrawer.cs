@@ -15,7 +15,7 @@ public class FrustumDrawer : MonoBehaviour
     private Vector3 IntersectThreePlanes(MyPlane p1, MyPlane p2, MyPlane p3)
     {
         Vector3 n1 = p1.Normal, n2 = p2.Normal, n3 = p3.Normal;
-        float determinant = Vector3.Dot(n1, Vector3.Cross(n2, n3));
+        float determinant = MyTools.DotProduct(n1, MyTools.CrossProduct(n2, n3));
 
         if (Mathf.Abs(determinant) < 1e-6f)
         {
@@ -24,9 +24,9 @@ public class FrustumDrawer : MonoBehaviour
         }
 
         Vector3 intersectPoint = (
-            (-p1.Distance * Vector3.Cross(n2, n3)) +
-            (-p2.Distance * Vector3.Cross(n3, n1)) +
-            (-p3.Distance * Vector3.Cross(n1, n2))
+            (-p1.Distance * MyTools.CrossProduct(n2, n3)) +
+            (-p2.Distance * MyTools.CrossProduct(n3, n1)) +
+            (-p3.Distance * MyTools.CrossProduct(n1, n2))
         ) / determinant;
 
         return intersectPoint;
@@ -53,11 +53,5 @@ public class FrustumDrawer : MonoBehaviour
             Gizmos.DrawLine(corners[i + 4], corners[(i + 1) % 4 + 4]);
             Gizmos.DrawLine(corners[i], corners[i + 4]);
         }
-
-        //foreach (MyPlane plane in frustrum.GetPlanes())
-        //{
-        //    Gizmos.DrawLine(transform.position, plane.Normal);
-        //    Gizmos.DrawWireSphere(transform.position * plane.Distance, 0.01f);
-        //}
     }
 }

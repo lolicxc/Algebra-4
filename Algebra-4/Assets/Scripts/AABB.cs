@@ -45,10 +45,12 @@ public class AABB : MonoBehaviour
 
         for (int i = 0; i < vertices.Length; i++)
         {
-            minV = Vector3.Min(minV, transform.TransformPoint(vertices[i]));
-            maxV = Vector3.Max(maxV, transform.TransformPoint(vertices[i]));
+            minV = MyTools.Min(minV, transform.TransformPoint(vertices[i]));
+            maxV = MyTools.Max(maxV, transform.TransformPoint(vertices[i]));
         }
     }
+
+    
 
     private void SetVertices()
     {

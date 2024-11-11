@@ -16,25 +16,6 @@ public class Frustrum
 
     public Frustrum(Transform transform, float aspect, float fovY, float zNear, float zFar)
     {
-        // Transform cam = Camera.main.transform;
-        //
-        // fovY *= Mathf.Deg2Rad;
-        //
-        // float halfVSide = zFar * Mathf.Tan(fovY * 0.5f);
-        // float halfHSide = halfVSide * aspect;
-        //
-        // Vector3 frontMultFar = zFar * Camera.main.transform.forward;
-        //
-        // nearFace = new MyPlane(cam.position + zNear * cam.forward, cam.forward);
-        // farFace = new MyPlane(cam.position + frontMultFar, -cam.forward);
-        // rightFace = new MyPlane(cam.position, Vector3.Cross(frontMultFar - cam.right * halfHSide, cam.up));
-        //
-        // leftFace = new MyPlane(cam.position, Vector3.Cross(cam.up, frontMultFar + cam.right * halfHSide));
-        //
-        // topFace = new MyPlane(cam.position, Vector3.Cross(cam.right, frontMultFar - cam.up * halfVSide));
-        //
-        // bottomFace = new MyPlane(cam.position, Vector3.Cross(frontMultFar + cam.up * halfVSide, cam.right));
-
         SetData(transform, aspect, fovY, zNear, zFar);
     }
 
@@ -46,18 +27,18 @@ public class Frustrum
 
         float halfVSide = zFar * Mathf.Tan(fovY * 0.5f);
         float halfHSide = halfVSide * aspect;
-        
+
         Vector3 frontMultFar = zFar * testTransform.forward;
 
         nearFace.SetNormalAndPosition(cam.position + zNear * cam.forward, -cam.forward);
         farFace.SetNormalAndPosition(cam.position + frontMultFar, cam.forward);
-        rightFace.SetNormalAndPosition(cam.position, Vector3.Cross(cam.up, frontMultFar + cam.right * halfHSide));
+        rightFace.SetNormalAndPosition(cam.position, MyTools.CrossProduct(cam.up, frontMultFar + cam.right * halfHSide));
 
-        leftFace.SetNormalAndPosition(cam.position, Vector3.Cross(frontMultFar - cam.right * halfHSide, cam.up));
+        leftFace.SetNormalAndPosition(cam.position, MyTools.CrossProduct(frontMultFar - cam.right * halfHSide, cam.up));
 
-        topFace.SetNormalAndPosition(cam.position, Vector3.Cross(cam.right, frontMultFar - cam.up * halfVSide));
+        topFace.SetNormalAndPosition(cam.position, MyTools.CrossProduct(cam.right, frontMultFar - cam.up * halfVSide));
 
-        bottomFace.SetNormalAndPosition(cam.position, Vector3.Cross(frontMultFar + cam.up * halfVSide, cam.right));
+        bottomFace.SetNormalAndPosition(cam.position, MyTools.CrossProduct(frontMultFar + cam.up * halfVSide, cam.right));
     }
 
     public MyPlane[] GetPlanes()
